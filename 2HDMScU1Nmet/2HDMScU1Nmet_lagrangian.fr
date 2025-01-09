@@ -1,0 +1,93 @@
+LGauge := Block[{mu,nu,ii,jj,aa}, 
+  ExpandIndices[- 1/4 FS[B,mu,nu] FS[B,mu,nu] - 1/4 FS[Wi,mu,nu,ii] FS[Wi,mu,nu,ii] - 1/4 FS[G,mu,nu,aa] FS[G,mu,nu,aa] - 1/4 FS[Bp,mu,nu] FS[Bp,mu,nu] , FlavorExpand->SU2W]];
+
+LFermions := Block[{mu}, 
+  ExpandIndices[I*(
+    QLbar.Ga[mu].DC[QL, mu] + LLbar.Ga[mu].DC[LL, mu] + uRbar.Ga[mu].DC[uR, mu] + dRbar.Ga[mu].DC[dR, mu] + lRbar.Ga[mu].DC[lR, mu]
+    )
+    , FlavorExpand->{SU2W,SU2D,Neutrinos,CPevenscalar}]];
+
+LHiggs := Block[{ii,jj,mu,V2HDMS,feynmangaugerules},
+	 feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar|G0p->0}, {}];
+  
+  V2HDMS =  - mu1 Phi1bar[ii] Phi1[ii] + lam1/2 Phi1bar[ii] Phi1[ii] Phi1bar[jj] Phi1[jj]
+            - mu2 Phi2bar[ii] Phi2[ii] + lam2/2 Phi2bar[ii] Phi2[ii] Phi2bar[jj] Phi2[jj]
+            - mus Phi3bar*Phi3 + lams/2 Phi3bar*Phi3 Phi3bar*Phi3
+            + lama (Phi1bar[ii]Phi2[ii]Phi3 + Phi2bar[ii]Phi1[ii]Phi3bar)
+            + lamd (Phi1bar[ii]Phi1[ii])(Phi2bar[jj]Phi2[jj])
+            + lamm (Phi1bar[ii]Phi2[ii])(Phi2bar[jj]Phi1[jj])
+            + lam1s (Phi1bar[ii]Phi1[ii])Phi3bar*Phi3
+            + lam2s (Phi2bar[ii]Phi2[ii])Phi3bar*Phi3;
+ 
+  
+  Lscalar = ExpandIndices[DC[Phi1bar[ii],mu] DC[Phi1[ii],mu] + DC[Phi2bar[ii],mu] DC[Phi2[ii],mu] + DC[Phi3bar,mu] DC[Phi3,mu] - V2HDMS, FlavorExpand->{SU2D,SU2W,CPevenscalar}];
+  Lscalar/.{Rew[a_,b_] Transpose[Rew[a_,c_]]->IndexDelta[b,c], Rew[b_,a_] Transpose[Rew[c_,a_]]->IndexDelta[b,c]}/.{Rcp[a_,b_] Transpose[Rcp[a_,c_]]->IndexDelta[b,c], Rcp[b_,a_] Transpose[Rcp[c_,a_]]->IndexDelta[b,c]}/.{Reta[a_,b_] Transpose[Reta[a_,c_]]->IndexDelta[b,c], Reta[b_,a_] Transpose[Reta[c_,a_]]->IndexDelta[b,c]}/.feynmangaugerules
+
+ ];
+
+LYukawa := Block[{sp,ii,jj,cc,ff1,ff2,ff3,yuk,feynmangaugerules},
+	 feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar|G0p->0}, {}];
+
+   yuk = ExpandIndices[
+	                      - yd[ff2, ff3] CKM[ff1, ff2] QLbar[sp, ii, ff1, cc].dR [sp, ff3, cc] Phi2[ii]
+	                      - yl[ff1, ff2] LLbar[sp, ii, ff1].lR [sp, ff2] Phi2[ii]
+	                      - yu[ff1, ff2] QLbar[sp, ii, ff1, cc].uR [sp, ff2, cc] Phi2bar[jj] Eps[ii, jj]
+   , FlavorExpand -> SU2D];
+
+  yuk = yuk /. { CKM[a_, b_] Conjugate[CKM[a_, c_]] -> IndexDelta[b, c], CKM[b_, a_] Conjugate[CKM[c_, a_]] -> IndexDelta[b, c]};
+  yuk = yuk/.{Rew[a_,b_] Transpose[Rew[a_,c_]]->IndexDelta[b,c], Rew[b_,a_] Transpose[Rew[c_,a_]]->IndexDelta[b,c]}/.{Rcp[a_,b_] Transpose[Rcp[a_,c_]]->IndexDelta[b,c], Rcp[b_,a_] Transpose[Rcp[c_,a_]]->IndexDelta[b,c]}/.{Reta[a_,b_] Transpose[Reta[a_,c_]]->IndexDelta[b,c], Reta[b_,a_] Transpose[Reta[c_,a_]]->IndexDelta[b,c]}/.{nmixl[b_,a_] Transpose[nmixl[c_,a_]]->IndexDelta[b,c]}/.{nmixh[b_,a_] Transpose[nmixh[c_,a_]]->IndexDelta[b,c]};
+  yuk+HC[yuk]/.feynmangaugerules
+ ];
+
+
+LNeutrino := Block[{sp1,sp2,ff1,ff2,ii,jj,mu,feynmangaugerules},
+	 feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar|G0p->0}, {}];
+
+
+LK = I*(nVLbar[sp1,ff1].Ga[mu,sp1,sp2].DC[nVL[sp2,ff1], mu]) + I*(nVRbar[sp1,ff1].Ga[mu,sp1,sp2].DC[nVR[sp2,ff1], mu]);
+
+LM = - ynv[ff1,ff2] nVLbar[sp1,ff1].nVR[sp1,ff2];
+
+LY = - yneu[ff1, ff2] LLbar[sp1, ii, ff1].nVR [sp1, ff2] Phi1bar[jj] Eps[ii, jj];
+
+
+LNeu = ExpandIndices[LK + LY + LM + HC[LY + LM], FlavorExpand->{SU2D,SU2W,CPevenscalar,Neutrino}]/.{nmixl[b_,a_] Transpose[nmixl[c_,a_]]->IndexDelta[b,c]}/.{nmixh[b_,a_] Transpose[nmixh[c_,a_]]->IndexDelta[b,c]}/.{Rcp[a_,b_] Transpose[Rcp[a_,c_]]->IndexDelta[b,c], Rcp[b_,a_] Transpose[Rcp[c_,a_]]->IndexDelta[b,c]}/.{Reta[a_,b_] Transpose[Reta[a_,c_]]->IndexDelta[b,c], Reta[b_,a_] Transpose[Reta[c_,a_]]->IndexDelta[b,c]}/.{Rew[a_,b_] Transpose[Rew[a_,c_]]->IndexDelta[b,c], Rew[b_,a_] Transpose[Rew[c_,a_]]->IndexDelta[b,c]}/.feynmangaugerules
+];
+
+
+LSterile := Block[{mu,feynmangaugerules},
+	 feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar|G0p->0}, {}];
+
+
+LcsiF = I*(csibar.Ga[mu].DC[csi, mu]);
+
+LcsiS = - 1/2 * yns * csibar.csi * vevs - 1/2 * yns * csibar.csi * hs;
+
+
+Lcsi = ExpandIndices[LcsiF + LcsiS]/.{Rcp[a_,b_] Transpose[Rcp[a_,c_]]->IndexDelta[b,c], Rcp[b_,a_] Transpose[Rcp[c_,a_]]->IndexDelta[b,c]}/.{Reta[a_,b_] Transpose[Reta[a_,c_]]->IndexDelta[b,c], Reta[b_,a_] Transpose[Reta[c_,a_]]->IndexDelta[b,c]}/.feynmangaugerules
+];
+
+
+
+(* Only QCD part *)
+LGhost := Block[{LGhs,mu},
+  (* Pure gauge piece *) 	
+  LGhs = -ghGbar.del[DC[ghG,mu],mu];
+
+ExpandIndices[ LGhs , FlavorExpand->SU2W]];
+
+
+(* CP even operators *)
+
+LCPEven := Block[{mu,nu,b,feynmangaugerules},
+  feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar|G0p ->0}, {}];
+  
+      
+  Leff = -1/4 GH1 FS[G, mu, nu, b] FS[G, mu, nu, b] Rcp[2,2] h -1/4 AH1 FS[A, mu, nu] FS[A, mu, nu] Rcp[2,2] h
+         -1/4 GH2 FS[G, mu, nu, b] FS[G, mu, nu, b] Rcp[1,2] hh -1/4 AH2 FS[A, mu, nu] FS[A, mu, nu] Rcp[1,2] hh
+         -1/4 GH3 FS[G, mu, nu, b] FS[G, mu, nu, b] Rcp[3,2] hs -1/4 AH3 FS[A, mu, nu] FS[A, mu, nu] Rcp[3,2] hs;
+
+  ExpandIndices[ Leff, FlavorExpand->{SU2D,SU2W,CPevenscalar} ]/.feynmangaugerules
+ ];
+
+Lag := LGauge + LFermions + LHiggs + LYukawa + LNeutrino + LSterile + LGhost + LCPEven;

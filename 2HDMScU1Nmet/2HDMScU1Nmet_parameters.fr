@@ -1,0 +1,781 @@
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)
+
+
+(* The loop coefficient *)
+
+sert[x_] := 1+ 7/30 x + 2/21 x^2 + 26/525 x^3;
+
+serw[xw_, xt_] := 1 + xw * 66/235 +xw^2 * 228/1645 + xw^3 * 696/8225 +
+            xw^4 * 5248/90475 +xw^5 * 1280/29939+ xw^6 * 54528/1646645- 
+            xt * 56/705 - xt^2 * 32/987;
+
+serp[x_] := 1 + x/3 + x^2 * 8/45 + x^3 * 4/35;
+
+
+
+M$Parameters = {
+
+(********************************************************)
+(***************** External parameters ******************)
+(********************************************************)
+
+  (* External parameters *)
+  aEWM1 == { 
+    ParameterType    -> External, 
+    BlockName        -> SMINPUTS, 
+    OrderBlock       -> 1, 
+    Value            -> 127.9,
+    InteractionOrder -> {QED,-2},
+    Description      -> "Inverse of the EW coupling constant at the Z pole"
+  },
+  Gf == {
+    ParameterType    -> External,
+    BlockName        -> SMINPUTS,
+    OrderBlock       -> 2,
+    Value            -> 1.16637*^-5, 
+    InteractionOrder -> {QED,2},
+    TeX              -> Subscript[G,f],
+    Description      -> "Fermi constant"
+  },
+  aS    == { 
+    ParameterType    -> External,
+    BlockName        -> SMINPUTS,
+    OrderBlock       -> 3,
+    Value            -> 0.1184, 
+    InteractionOrder -> {QCD,2},
+    TeX              -> Subscript[\[Alpha],s],
+    Description      -> "Strong coupling constant at the Z pole"
+  },
+
+  ymdo == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 1,
+    Value         -> 5.04*^-3,
+    Description   -> "Down Yukawa mass"
+  },
+  ymup == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 2,
+    Value         -> 2.55*^-3,
+    Description   -> "Up Yukawa mass"
+  },
+  yms == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 3,
+    Value         -> 0.101,
+    Description   -> "Strange Yukawa mass"
+  },
+  ymc == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 4,
+    Value         -> 1.27,
+    Description   -> "Charm Yukawa mass"
+  },
+  ymb == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 5,
+    Value         -> 4.7,
+    Description   -> "Bottom Yukawa mass"
+  },
+  ymt == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 6,
+    Value         -> 172,
+    Description   -> "Top Yukawa mass"
+  },
+  yme == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 11,
+    Value         -> 5.11*^-4,
+    Description   -> "Electron Yukawa mass"
+  },
+  ymm == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 13,
+    Value         -> 0.10566,
+    Description   -> "Muon Yukawa mass"
+  },
+  ymtau == {
+    ParameterType -> External,
+    BlockName     -> YUKAWA,
+    OrderBlock    -> 15,
+    Value         -> 1.777,
+    Description   -> "Tau Yukawa mass"
+  },
+  cabi == {
+    ParameterType -> External,
+    BlockName     -> CKMBLOCK,
+    OrderBlock    -> 1,
+    Value         -> 0.227736,
+    TeX           -> Subscript[\[Theta], c],
+    Description   -> "Cabibbo angle"
+  },
+  
+  sw == { 
+    ParameterType -> External, 
+    Value         -> Sqrt[0.223],
+    TeX           -> Subscript[s,w], 
+    Description   -> "Sine of the Weinberg angle"
+  },
+
+
+(*----------------------------------*)
+(***  Zprime external parameters  ***)
+(*----------------------------------*)
+
+(*
+  alphax == {
+    ParameterType -> External,
+    BlockName     -> ZPMIXING,
+    OrderBlock    -> 1,
+    Value         -> 0.001,
+    TeX           -> Subscript[\[Theta], x],
+    Description   -> "Mixing angle for Z-Zp"
+  },
+*)
+
+(*
+  MW == { 
+    ParameterType -> External, 
+    Value         -> 80.406, 
+    TeX           -> Subscript[M,W], 
+    Description   -> "W mass"
+  },
+*)
+
+
+(*----------------------------------*)
+(***  Scalar external parameters  ***)
+(*----------------------------------*)
+
+  a1 == {
+    ParameterType    -> External,
+    BlockName        -> THDMSBLOCK,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Alpha],1],
+    Description      -> "CP-even mixing alpha 1"
+  },
+  a2 == {
+    ParameterType    -> External,
+    BlockName        -> THDMSBLOCK,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Alpha],2],
+    Description      -> "CP-even mixing alpha 2"
+  },
+  a3 == {
+    ParameterType    -> External,
+    BlockName        -> THDMSBLOCK,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Alpha],3],
+    Description      -> "CP-even mixing alpha 3"
+  },
+  (*
+  beta == {
+    ParameterType    -> External,
+    BlockName        -> THDMSBLOCK,
+    Value            -> 1.5,
+    TeX              -> \[Beta],
+    Description      -> "Beta angle"
+  },
+  *)
+  tanb == {
+    ParameterType    -> External,
+    BlockName        -> THDMSBLOCK,
+    Value            -> 15,
+    TeX              -> Subscript[t,\[Beta]],
+    Description      -> "Tangent of beta"
+  },
+  
+
+
+(*------------------------------------*)
+(***  Neutrino external parameters  ***)
+(*------------------------------------*)
+
+
+  theta1N == {
+    ParameterType    -> External,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Theta]1, n],
+    Description      -> "Mixing 1st generation between light and heavy neutrino"
+},
+
+  theta2N == {
+    ParameterType    -> External,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Theta]2, n],
+    Description      -> "Mixing 2nd generation between light and heavy neutrino"
+},
+
+  theta3N == {
+    ParameterType    -> External,
+    Value            -> 0.1,
+    TeX              -> Subscript[\[Theta]3, n],
+    Description      -> "Mixing 3rd generation between light and heavy neutrino"
+},
+
+
+
+(********************************************************)
+(***************** Internal parameters ******************)
+(********************************************************)
+
+  (* Internal Parameters *)
+  aEW == {
+    ParameterType    -> Internal,
+    Value            -> 1/aEWM1,
+    InteractionOrder -> {QED,2},
+    TeX              -> Subscript[\[Alpha], EW],
+    Description      -> "Electroweak coupling contant"
+  },
+  vev == {
+    ParameterType    -> Internal,
+    Value            -> 2*MW*sw/ee, 
+    InteractionOrder -> {QED,-1},
+    TeX              -> v,
+		ComplexParameter -> False,
+    Description      -> "Higgs vacuum expectation value"
+  },
+  ee == { 
+    ParameterType    -> Internal, 
+    Value            -> Sqrt[4 Pi aEW], 
+    InteractionOrder -> {QED,1}, 
+    TeX              -> e,  
+    Description      -> "Electric coupling constant"
+  },
+  cw == { 
+    ParameterType -> Internal, 
+    Value         -> Sqrt[1-sw^2], 
+    TeX           -> Subscript[c,w],
+    Description   -> "Cosine of the Weinberg angle"
+  },
+  gw == { 
+    ParameterType    -> Internal, 
+    Definitions      -> {gw->ee/sw}, 
+    InteractionOrder -> {QED,1},  
+    TeX              -> Subscript[g,w], 
+    Description      -> "Weak coupling constant at the Z pole"
+  },
+  g1 == { 
+    ParameterType    -> Internal, 
+    Definitions      -> {g1->ee/cw}, 
+    InteractionOrder -> {QED,1},  
+    TeX              -> Subscript[g,1], 
+    Description      -> "U(1)Y coupling constant at the Z pole"
+  },
+  gs == { 
+    ParameterType    -> Internal, 
+    Value            -> Sqrt[4 Pi aS],
+    InteractionOrder -> {QCD,1},  
+    TeX              -> Subscript[g,s], 
+    ParameterName    -> G,
+    Description      -> "Strong coupling constant at the Z pole"
+  },
+
+
+  yl == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[Generation], Index[Generation]},
+    Definitions      -> {yl[i_?NumericQ, j_?NumericQ] :> 0  /; (i =!= j)},
+    Value            -> {yl[1,1] -> Sqrt[2] yme / vev / sb, yl[2,2] -> Sqrt[2] ymm / vev / sb, yl[3,3] -> Sqrt[2] ymtau / vev / sb},
+    InteractionOrder -> {QED, 1},
+    ParameterName    -> {yl[1,1] -> ye, yl[2,2] -> ym, yl[3,3] -> ytau},
+    TeX              -> Superscript[Y, l],
+    Description      -> "Lepton Yukawa couplings"
+  },
+
+  yu == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[Generation], Index[Generation]},
+    Definitions      -> {yu[i_?NumericQ, j_?NumericQ] :> 0  /; (i =!= j)},
+    Value            -> {yu[1,1] -> Sqrt[2] ymup / vev / sb, yu[2,2] -> Sqrt[2] ymc /vev / sb, yu[3,3] -> Sqrt[2] ymt /vev / sb},
+    InteractionOrder -> {QED, 1},
+    ParameterName    -> {yu[1,1] -> yup, yu[2,2] -> yc, yu[3,3] -> yt},
+    TeX              -> Superscript[Y, u],
+    Description      -> "Up-type Yukawa couplings"
+  },
+  yd == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[Generation], Index[Generation]},
+    Definitions      -> {yd[i_?NumericQ, j_?NumericQ] :> 0  /; (i =!= j)},
+    Value            -> {yd[1,1] -> Sqrt[2] ymdo /vev / sb, yd[2,2] -> Sqrt[2] yms /vev / sb, yd[3,3] -> Sqrt[2] ymb /vev / sb},
+    InteractionOrder -> {QED, 1},
+    ParameterName    -> {yd[1,1] -> ydo, yd[2,2] -> ys, yd[3,3] -> yb},
+    TeX              -> Superscript[Y, d],
+    Description      -> "Down-type Yukawa couplings"
+  },
+(* N. B. : only Cabibbo mixing! *)
+  CKM == { 
+    ParameterType -> Internal,
+    Indices       -> {Index[Generation], Index[Generation]},
+    Unitary       -> True,
+    Value         -> {CKM[1,1] -> Cos[cabi],  CKM[1,2] -> Sin[cabi], CKM[1,3] -> 0,
+                      CKM[2,1] -> -Sin[cabi], CKM[2,2] -> Cos[cabi], CKM[2,3] -> 0,
+                      CKM[3,1] -> 0,          CKM[3,2] -> 0,         CKM[3,3] -> 1},
+    TeX         -> Superscript[V,CKM],
+    Description -> "CKM-Matrix"},
+
+(*----------------------------------*)
+(***  Scalar internal parameters   **)
+(*----------------------------------*)
+
+
+  sb == {
+    ParameterType -> Internal,
+    
+    Value         -> tanb/Sqrt[1 + tanb^2],
+    (*
+    Definitions         -> {sb -> Sin[beta]},
+    *)
+    TeX           -> Subscript[s,\[Beta]],
+    Description   -> "sin beta"
+  },
+  cb == {
+    ParameterType -> Internal,
+    
+    Value         -> 1/Sqrt[1 + tanb^2],
+    (*
+    Definitions         -> {cb -> Cos[beta]},
+    *)
+    TeX           -> Subscript[c,\[Beta]],
+    Description   -> "cos beta"
+  },
+
+  (*
+  tanb == {
+    ParameterType -> Internal,
+    Definitions         -> {tanb -> Tan[beta]},
+    TeX           -> Subscript[t,\[Beta]],
+    Description   -> "tan beta"
+  },
+  *)
+
+  ccp1 == {
+    ParameterType -> Internal,
+    Value         -> Cos[a1],
+    (*Definitions         -> {ccp1 -> Cos[a1]},*)
+    TeX           -> Subscript[c,\[Alpha]1],
+    Description   -> "Cos a1"
+  },
+
+  ccp2 == {
+    ParameterType -> Internal,
+    Value         -> Cos[a2],
+    (*Definitions         -> {ccp2 -> Cos[a2]},*)
+    TeX           -> Subscript[c,\[Alpha]2],
+    Description   -> "Cos a2"
+  },
+  
+  ccp3 == {
+    ParameterType -> Internal,
+    Value         -> Cos[a3],
+    (*Definitions         -> {ccp3 -> Cos[a3]},*)
+    TeX           -> Subscript[c,\[Alpha]3],
+    Description   -> "Cos a3"
+  },
+
+  scp1 == {
+    ParameterType -> Internal,
+    Value         -> Sin[a1],
+    (*Definitions         -> {scp1 -> Sin[a1]},*)
+    TeX           -> Subscript[s,\[Alpha]1],
+    Description   -> "Sin a1"
+  },
+
+  scp2 == {
+    ParameterType -> Internal,
+    Value         -> Sin[a2],
+    (*Definitions         -> {scp2 -> Sin[a2]},*)
+    TeX           -> Subscript[s,\[Alpha]2],
+    Description   -> "Sin a2"
+  },
+  
+  scp3 == {
+    ParameterType -> Internal,
+    Value         -> Sin[a3],
+    (*Definitions         -> {scp3 -> Sin[a3]},*)
+    TeX           -> Subscript[s,\[Alpha]3],
+    Description   -> "Sin a3"
+  },
+  
+  Rcp == { 
+    ParameterType -> Internal,
+    Indices       -> {Index[CPevenscalar], Index[CPevenscalar]},
+    Orthogonal    -> True,
+    ComplexParameter -> False,
+    
+    Value ->  {Rcp[1,1] ->   ccp1*ccp2,                              Rcp[1,2] ->   scp1*ccp2,                              Rcp[1,3] -> scp2,
+               Rcp[2,1] -> - ccp1*scp2*scp3 - scp1*ccp3,             Rcp[2,2] ->   ccp1*ccp3 - scp1*scp2*scp3,             Rcp[2,3] -> ccp2*scp3,
+               Rcp[3,1] -> - ccp1*scp2*ccp3 + scp1*scp3,             Rcp[3,2] -> - ccp1*scp3 - scp1*scp2*ccp3,             Rcp[3,3] -> ccp2*ccp3},  
+    (*
+    Definitions ->  { Rcp[1,1] ->   ccp1*ccp2,                              Rcp[1,2] ->   scp1*ccp2,                              Rcp[1,3] -> scp2,
+                      Rcp[2,1] -> - ccp1*scp2*scp3 - scp1*ccp3,             Rcp[2,2] ->   ccp1*ccp3 - scp1*scp2*scp3,             Rcp[2,3] -> ccp2*scp3,
+                      Rcp[3,1] -> - ccp1*scp2*ccp3 + scp1*scp3,             Rcp[3,2] -> - ccp1*scp3 - scp1*scp2*ccp3,             Rcp[3,3] -> ccp2*ccp3},
+    *)
+    TeX           -> Superscript[R,CP],
+    Description   -> "CP-even mixing"
+  },
+
+  Reta == { 
+    ParameterType -> Internal,
+    Indices       -> {Index[CPevenscalar], Index[CPevenscalar]},
+    Orthogonal    -> True,
+    ComplexParameter -> False,
+    
+    Value         ->  { Reta[1,1] -> vev*cb/Sqrt[vev^2*cb^2 + vevs^2],                                        Reta[1,2] -> 0,                                                                         Reta[1,3] -> vevs/Sqrt[vev^2*cb^2 + vevs^2],
+                        Reta[2,1] -> vevs^2*cb/Sqrt[vev^2*cb^2 + vevs^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],      Reta[2,2] -> Sqrt[vev^2*cb^2*sb^2 + vevs^2*sb^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],        Reta[2,3] -> - vev*vevs*cb^2/Sqrt[vev^2*cb^2 + vevs^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],
+                        Reta[3,1] -> - vevs*sb/Sqrt[vev^2*cb^2*sb^2 + vevs^2],                                Reta[3,2] -> vevs*cb/Sqrt[vev^2*cb^2*sb^2 + vevs^2],                                    Reta[3,3] -> vev*cb*sb/Sqrt[vev^2*cb^2*sb^2 + vevs^2]},
+    (*
+    Definitions   ->  { Reta[1,1] -> vev*cb/Sqrt[vev^2*cb^2 + vevs^2],                                        Reta[1,2] -> 0,                                                                         Reta[1,3] -> vevs/Sqrt[vev^2*cb^2 + vevs^2],
+                        Reta[2,1] -> vevs^2*cb/Sqrt[vev^2*cb^2 + vevs^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],      Reta[2,2] -> Sqrt[vev^2*cb^2*sb^2 + vevs^2*sb^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],        Reta[2,3] -> - vev*vevs*cb^2/Sqrt[vev^2*cb^2 + vevs^2]/Sqrt[vev^2*cb^2*sb^2 + vevs^2],
+                        Reta[3,1] -> - vevs*sb/Sqrt[vev^2*cb^2*sb^2 + vevs^2],                                Reta[3,2] -> vevs*cb/Sqrt[vev^2*cb^2*sb^2 + vevs^2],                                    Reta[3,3] -> vev*cb*sb/Sqrt[vev^2*cb^2*sb^2 + vevs^2]},
+    *)
+    TeX           -> Superscript[R,\[Eta]],
+    Description   -> "CP-odd mixing"
+},
+
+  lam1 == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            ->  1/(vev^2*cb^2)*( (Mhh^2*Rcp[1,1]*Rcp[1,1] + Mh^2*Rcp[2,1]*Rcp[2,1] + Mhs^2*Rcp[3,1]*Rcp[3,1]) + MA0^2*vevs^2/(vev^2*cb^2 + vevs^2/sb^2) ),
+    (*
+    Definitions            -> {lam1 -> 1/(vev^2*cb^2)*( (Mhh^2*Rcp[1,1]*Rcp[1,1] + Mh^2*Rcp[2,1]*Rcp[2,1] + Mhs^2*Rcp[3,1]*Rcp[3,1]) + MA0^2*vevs^2/(vev^2*cb^2 + vevs^2/sb^2) )},
+    *)
+    TeX              -> Subscript[\[Lambda],1]
+},
+  lam2 == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            -> 1/(vev^2*sb^2)*( (Mhh^2*Rcp[1,2]*Rcp[1,2] + Mh^2*Rcp[2,2]*Rcp[2,2] + Mhs^2*Rcp[3,2]*Rcp[3,2]) + MA0^2*vevs^2/(vev^2*sb^2 + vevs^2/cb^2) ),
+    (*
+    Definitions            -> {lam2 -> 1/(vev^2*sb^2)*( (Mhh^2*Rcp[1,2]*Rcp[1,2] + Mh^2*Rcp[2,2]*Rcp[2,2] + Mhs^2*Rcp[3,2]*Rcp[3,2]) + MA0^2*vevs^2/(vev^2*sb^2 + vevs^2/cb^2) )},
+    *)
+    TeX              -> Subscript[\[Lambda],2]
+},
+
+  lams == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            -> 1/(vevs^2)*((Mhh^2*Rcp[1,3]*Rcp[1,3] + Mh^2*Rcp[2,3]*Rcp[2,3] + Mhs^2*Rcp[3,3]*Rcp[3,3]) + MA0^2*((vev^2*cb^2*sb^2)/(vev^2*cb^2*sb^2 + vevs^2))),
+    (*
+    Definitions            -> {lams -> 1/(vevs^2)*((Mhh^2*Rcp[1,3]*Rcp[1,3] + Mh^2*Rcp[2,3]*Rcp[2,3] + Mhs^2*Rcp[3,3]*Rcp[3,3]) + MA0^2*((vev^2*cb^2*sb^2)/(vev^2*cb^2*sb^2 + vevs^2))) },
+    *)
+    TeX              -> Subscript[\[Lambda],s]
+},
+
+  lamd == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,    
+    InteractionOrder -> {QED,2},
+    
+    Value            -> 1/vev^2*( 1/(sb*cb)*(Mhh^2*Rcp[1,1]*Rcp[1,2] + Mh^2*Rcp[2,1]*Rcp[2,2] + Mhs^2*Rcp[3,1]*Rcp[3,2]) - 2*MHP^2) + MA0^2*(1/vev^2 - sb^2*cb^2/(vev^2*cb^2*sb^2 + vevs^2)),    
+    (*
+    Definitions            -> {lamd -> 1/vev^2*( 1/(sb*cb)*(Mhh^2*Rcp[1,1]*Rcp[1,2] + Mh^2*Rcp[2,1]*Rcp[2,2] + Mhs^2*Rcp[3,1]*Rcp[3,2]) - 2*MHP^2) + MA0^2*(1/vev^2 - sb^2*cb^2/(vev^2*cb^2*sb^2 + vevs^2)) },
+    *)
+    TeX              -> Subscript[\[Lambda],d]
+},
+  lamm == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            ->  2/vev^2*( - MA0^2*vevs^2/(vev^2*sb^2*cb^2 + vevs^2) + MHP^2),
+    (*
+    Definitions            -> {lamm -> 2/vev^2*( - MA0^2*vevs^2/(vev^2*sb^2*cb^2 + vevs^2) + MHP^2) },
+    *)
+    TeX              -> Subscript[\[Lambda],m]
+},
+  lam1s == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            -> 1/(vev*vevs)*1/cb*(Mhh^2*Rcp[1,1]*Rcp[1,3] + Mh^2*Rcp[2,1]*Rcp[2,3] + Mhs^2*Rcp[3,1]*Rcp[3,3]) - sb^2*MA0^2/(vev^2*cb^2*sb^2 + vevs^2),
+    (*
+    Definitions            -> {lam1s -> 1/(vev*vevs)*1/cb*(Mhh^2*Rcp[1,1]*Rcp[1,3] + Mh^2*Rcp[2,1]*Rcp[2,3] + Mhs^2*Rcp[3,1]*Rcp[3,3]) - sb^2*MA0^2/(vev^2*cb^2*sb^2 + vevs^2)},
+    *)
+    TeX              -> Subscript[\[Lambda],1s]
+},
+  lam2s == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,2},
+    
+    Value            -> 1/(vev*vevs)*1/sb*(Mhh^2*Rcp[1,2]*Rcp[1,3] + Mh^2*Rcp[2,2]*Rcp[2,3] + Mhs^2*Rcp[3,2]*Rcp[3,3]) - cb^2*MA0^2/(vev^2*cb^2*sb^2 + vevs^2),
+    (*
+    Definitions            -> {lam2s -> 1/(vev*vevs)*1/sb*(Mhh^2*Rcp[1,2]*Rcp[1,3] + Mh^2*Rcp[2,2]*Rcp[2,3] + Mhs^2*Rcp[3,2]*Rcp[3,3]) - cb^2*MA0^2/(vev^2*cb^2*sb^2 + vevs^2)},
+    *)
+    TeX              -> Subscript[\[Lambda],2s]
+},
+
+  lama == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    InteractionOrder -> {QED,1},
+    
+    Value            -> -Sqrt[2](cb*sb*MA0^2*vevs)/(vev^2*cb^2*sb^2 + vevs^2),
+    (*
+    Definitions            -> {lama -> Sqrt[2](cb*sb*MA0^2*vevs)/(vev^2*cb^2*sb^2 + vevs^2)},
+    *)
+    TeX              -> Subscript[\[Lambda],a]
+},
+
+  mu1 == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    
+    Value            -> (1/2*lam1*vev^2*cb^2 + 1/2*(lamd+lamm)*vev^2*sb^2 + 1/2*lam1s*vevs^2 + lama/Sqrt[2]*vevs*tanb),
+    (*
+    Definitions            -> {mu1 -> (1/2*lam1*vev^2*cb^2 + 1/2*(lamd+lamm)*vev^2*sb^2 + 1/2*lam1s*vevs^2 + lama/Sqrt[2]*vevs*tanb)},
+    *)
+    TeX              -> Subscript[\[Mu],1]
+},
+
+  mu2 == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    
+    Value            -> (1/2*lam2*vev^2*sb^2 + 1/2*(lamd+lamm)*vev^2*cb^2 + 1/2*lam2s*vevs^2 + lama/Sqrt[2]*vevs/tanb),
+    (*
+    Definitions            -> {mu2 -> (1/2*lam2*vev^2*sb^2 + 1/2*(lamd+lamm)*vev^2*cb^2 + 1/2*lam2s*vevs^2 + lama/Sqrt[2]*vevs/tanb)},
+    *)
+    TeX              -> Subscript[\[Mu],2]
+},
+
+
+  mus == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    
+    Value            -> (1/2*lam1s*vev^2*cb^2 + 1/2*lam2s*vev^2*sb^2 + 1/2*lams*vevs^2 + lama/Sqrt[2]*vev^2*sb*cb/vevs),
+    (*
+    Definitions            -> {mus -> (1/2*lam1s*vev^2*cb^2 + 1/2*lam2s*vev^2*sb^2 + 1/2*lams*vevs^2 + lama/Sqrt[2]*vev^2*sb*cb/vevs)},
+    *)
+    TeX              -> Subscript[\[Mu],s]
+},
+
+
+
+
+(*----------------------------------*)
+(***    N internal parameters     ***)
+(*----------------------------------*)
+
+  sn1 == {
+    ParameterType -> Internal,
+    Value         -> Sin[theta1N],
+    TeX           -> Subscript[s,\[Theta]1], 
+    Description   -> "Sine of 1-st generation neutrinos mixing"
+  },
+
+  cn1 == {
+    ParameterType -> Internal,
+    Value         -> Cos[theta1N],
+    TeX           -> Subscript[c,\[Theta]1], 
+    Description   -> "Cosine of 1-st generation neutrinos mixing"
+  },
+
+  sn2 == {
+    ParameterType -> Internal,
+    Value         -> Sin[theta2N],
+    TeX           -> Subscript[s,\[Theta]2], 
+    Description   -> "Sine of 2-nd generation neutrinos mixing"
+  },
+
+  cn2 == {
+    ParameterType -> Internal,
+    Value         -> Cos[theta2N],
+    TeX           -> Subscript[c,\[Theta]2], 
+    Description   -> "Cosine of 2-nd generation neutrinos mixing"
+  },
+
+  sn3 == {
+    ParameterType -> Internal,
+    Value         -> Sin[theta3N],
+    TeX           -> Subscript[s,\[Theta]3], 
+    Description   -> "Sine of 3-rd generation neutrinos mixing"
+  },
+
+  cn3 == {
+    ParameterType -> Internal,
+    Value         -> Cos[theta3N],
+    TeX           -> Subscript[c,\[Theta]3], 
+    Description   -> "Cosine of 3-rd generation neutrinos mixing"
+  },
+
+  yneu == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[Generation], Index[CPevenscalar]},
+    Definitions      -> {yneu[i_?NumericQ, j_?NumericQ] :> 0  /; (i =!= j)},
+    Value            -> {yneu[1,1] -> Sqrt[2] / vev / cb * Mnh1 * sn1, yneu[2,2] -> Sqrt[2] / vev / cb  * Mnh2 * sn2, yneu[3,3] -> Sqrt[2] / vev / cb  * Mnh3 * sn3},
+    InteractionOrder -> {QED, 1},
+    TeX              -> Superscript[Y, \[Nu]d],
+    Description      -> "Neutrino Yukawa couplings"
+  },
+
+  ynv == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[CPevenscalar], Index[CPevenscalar]},
+    Definitions      -> {ynv[i_?NumericQ, j_?NumericQ] :> 0  /; (i =!= j)},
+    Value            -> {ynv[1,1] ->  Mnh1 * cn1, ynv[2,2] -> Mnh2 * cn2, ynv[3,3] -> Mnh3 * cn3},
+    InteractionOrder -> {QED, 1},
+    TeX              -> Superscript[Y, \[Nu]v],
+    Description      -> "Neutrino Yukawa couplings"
+  },
+
+  yns == {
+    ParameterType    -> Internal,
+    ComplexParameter -> False,
+    Value            -> Sqrt[2] Mcsi / vevs,
+    InteractionOrder -> {QED, 1},
+    TeX              -> Superscript[Y, s],
+    Description      -> "Sterile Neutrino Yukawa couplings"
+  },
+
+(*
+No flavour mixing in the lepton sector.  
+*)
+
+	nmixh == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[CPevenscalar], Index[Neutrino]},
+    Definitions      -> {nmixh[1,1] -> - sn1,    nmixh[1,2] -> 0,         nmixh[1,3] -> 0,        nmixh[1,4] -> cn1,        nmixh[1,5] -> 0,      nmixh[1,6] -> 0,
+                         nmixh[2,1] -> 0,        nmixh[2,2] -> - sn2,     nmixh[2,3] -> 0,        nmixh[2,4] -> 0,          nmixh[2,5] -> cn2,    nmixh[2,6] -> 0,
+                         nmixh[3,1] -> 0,        nmixh[3,2] -> 0,         nmixh[3,3] -> - sn3,    nmixh[3,4] -> 0,          nmixh[3,5] -> 0,      nmixh[3,6] -> cn3},
+    TeX              -> Subscript[V, h],
+    Description      -> "Heavy neutrinos mixing"
+	},
+
+	nmixl == {
+    ParameterType    -> Internal,
+    Indices          -> {Index[CPevenscalar], Index[Neutrino]},
+    Definitions      -> {nmixl[1,1] -> cn1,      nmixl[1,2] -> 0,           nmixl[1,3] -> 0,           nmixl[1,4] -> sn1,        nmixl[1,5] -> 0,          nmixl[1,6] -> 0,
+                         nmixl[2,1] -> 0,        nmixl[2,2] -> cn2,         nmixl[2,3] -> 0,           nmixl[2,4] -> 0,          nmixl[2,5] -> sn2,        nmixl[2,6] -> 0,
+                         nmixl[3,1] -> 0,        nmixl[3,2] -> 0,           nmixl[3,3] -> cn3,         nmixl[3,4] -> 0,            nmixl[3,5] -> 0,          nmixl[3,6] -> sn3},
+    TeX              -> Subscript[V, l],
+    Description      -> "Light neutrinos mixing"
+	},
+
+
+
+(*----------------------------------*)
+(***    Zp internal parameters    ***)
+(*----------------------------------*)
+
+  Rew == { 
+    ParameterType -> Internal,
+    Indices       -> {Index[CPevenscalar], Index[CPevenscalar]},
+    Orthogonal    -> True,
+    ComplexParameter -> False,
+    Definitions ->  {Rew[1,1] -> cw,         Rew[1,2] -> sw,         Rew[1,3] -> 0,
+                     Rew[2,1] -> - cx*sw,    Rew[2,2] -> cw*cx,      Rew[2,3] -> sx,
+                     Rew[3,1] -> sw*sx,      Rew[3,2] -> - cw*sx,    Rew[3,3] -> cx},
+    TeX           -> Superscript[R,EW],
+    Description   -> "Neutral gauge bosons mixing"
+  },
+
+  sx == { 
+    ParameterType -> Internal, 
+    (*
+    Definitions         -> {sx -> Sqrt[(MW^2/cw^2 - MZ^2)/(MZP^2-MZ^2)]},
+    *)
+    Value         -> Sqrt[(MW^2/cw^2 - MZ^2)/(MZP^2-MZ^2)],
+    
+    TeX           -> Subscript[s,x], 
+    Description   -> "Sine of the mixing Z-Zp"
+  },
+
+(* Notice: we are assuming Zp with a larger mass than Z. Otherwise cx changes sign. *)
+  cx == { 
+    ParameterType -> Internal, 
+    (*
+    Definitions         -> {cx -> Sqrt[1-sx^2]},
+    *)
+    Value         -> Sqrt[1-sx^2],
+    
+    TeX           -> Subscript[c,x], 
+    Description   -> "Cosine of the mixing Z-Zp"
+  },
+
+  gp == {
+    ParameterType    -> Internal,
+    InteractionOrder -> {QED,1},
+    (*
+    Definitions            -> {gp -> gw*Sqrt[(MW^2/cw^2-MZ^2)*(MZP^2-MW^2/cw^2)]/(cw^2*2*MW^2*cb^2)},  
+    *)  
+    Value            -> gw*Sqrt[(MW^2/cw^2-MZ^2)*(MZP^2-MW^2/cw^2)]/(cw^2*2*MW^2*cb^2),
+    
+    Description      -> "U(1)X coupling constant",
+    TeX              -> Subscript[g,p]
+  },
+
+
+  vevs == { 
+    ParameterType    -> Internal, 
+    (*
+    Definitions            -> {vevs -> Sqrt[vev^2*cb^2((1 - cb^2)MW^2/cw^2*(MW^2/cw^2 - (MZ^2 + MZP^2)) + MZ^2*MZP^2)/((MW^2/cw^2 - MZ^2)(MZP^2 - MW^2/cw^2))]},
+    *)
+    Value            -> Sqrt[vev^2*cb^2((1 - cb^2)MW^2/cw^2*(MW^2/cw^2 - (MZ^2 + MZP^2)) + MZ^2*MZP^2)/((MW^2/cw^2 - MZ^2)(MZP^2 - MW^2/cw^2))],
+    
+    InteractionOrder -> {QED,-1},
+    TeX              -> Subscript[v, s],
+    Description      -> "Phi3 vacuum expectation value"
+  },
+
+
+(*----------------------------------*)
+(***    HEFT internal parameters    ***)
+(*----------------------------------*)
+
+AH1 == {TeX -> Subscript[A, H1],
+       ParameterType -> Internal,
+       Value -> ee^2/4/Pi/(Pi*vev*sb)*(47/18)*serw[(Mh/2/MW)^2, (Mh/2/MT)^2],  
+       InteractionOrder -> {HA, 1}
+       },
+
+GH1 == {TeX -> Subscript[G, H1],
+       ParameterType -> Internal,
+       Value -> -gs^2/(4Pi(3Pi vev * sb)) sert[(Mh/2/MT)^2],
+       InteractionOrder -> {HG, 1}
+       },
+
+AH2 == {TeX -> Subscript[A, H2],
+       ParameterType -> Internal,
+       Value -> ee^2/4/Pi/(Pi*vev*cb)*(47/18)*serw[(Mhh/2/MW)^2, (Mhh/2/MT)^2],  
+       InteractionOrder -> {HA, 1}
+       },
+
+GH2 == {TeX -> Subscript[G, H2],
+       ParameterType -> Internal,
+       Value -> -gs^2/(4Pi(3Pi vev * cb)) sert[(Mhh/2/MT)^2],
+       InteractionOrder -> {HG, 1}
+       },
+
+AH3 == {TeX -> Subscript[A, H3],
+       ParameterType -> Internal,
+       Value -> ee^2/4/Pi/(Pi*vevs)*(47/18)*serw[(Mhs/2/MW)^2, (Mhs/2/MT)^2],  
+       InteractionOrder -> {HA, 1}
+       },
+
+GH3 == {TeX -> Subscript[G, H3],
+       ParameterType -> Internal,
+       Value -> -gs^2/(4Pi(3Pi vevs)) sert[(Mhs/2/MT)^2],
+       InteractionOrder -> {HG, 1}
+       }
+};

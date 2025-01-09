@@ -1,0 +1,110 @@
+(***************************************************************************************************************)
+(******     This is the FeynRules mod-file for the 2HDMScU1Nmet                                           ******)
+(******     with right handed neutrinos                                                                   ******)
+(******                                                                                                   ******)
+(******     Authors: G. Coloretti                                                                         ******)
+(******                                                                                                   ******)
+(****** Choose whether Feynman gauge is desired.                                                          ******)
+(****** If set to False, unitary gauge is assumed.                                                          ****)
+(****** Feynman gauge is especially useful for CalcHEP/CompHEP where the calculation is 10-100 times faster. ***)
+(****** Feynman gauge is not supported in MadGRewh and Sherpa.                                              ****)
+(***************************************************************************************************************)
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "2HDMScU1Nmet_HEFT";
+
+M$Information = {
+  Authors      -> {"Guglielmo Coloretti"}, 
+  Version      -> "1",
+  Date         -> "2022",
+  Institutions -> {"University of Zurich / Paul Scherrer Institute"},
+  Emails       -> {"guglielmo.coloretti@physik.uzh.ch"}
+};
+
+FeynmanGauge = True;
+
+(* ************************** *)
+(* *****      vevs      ***** *)
+(* ************************** *)
+M$vevs = { {Phi1[2], vev cb}, {Phi2[2], vev sb}, {Phi3, vevs} };
+
+(* ************************** *)
+(* *****  Gauge groups  ***** *)
+(* ************************** *)
+M$GaugeGroups = {
+  U1Y  == { 
+    Abelian          -> True,  
+    CouplingConstant -> g1, 
+    GaugeBoson       -> B, 
+    Charge           -> Y
+  },
+  SU2L == { 
+    Abelian           -> False, 
+    CouplingConstant  -> gw, 
+    GaugeBoson        -> Wi, 
+    StructureConstant -> Eps, 
+    Representations   -> {Ta,SU2D}, 
+    Definitions       -> {Ta[a_,b_,c_]->PauliSigma[a,b,c]/2, FSU2L[i_,j_,k_]:> I Eps[i,j,k]}
+  },
+
+  SU3C == { 
+    Abelian           -> False, 
+    CouplingConstant  -> gs, 
+    GaugeBoson        -> G,
+    StructureConstant -> f, 
+    Representations   -> {T,Colour}, 
+    SymmetricTensor   -> dSUN
+  }, 
+
+  U1X == {
+    Abelian           -> True,
+    CouplingConstant  -> gp,
+    GaugeBoson        -> Bp,
+    Charge            -> X
+  }
+
+};
+
+
+(* ************************** *)
+(* *****    Indices     ***** *)
+(* ************************** *)
+
+IndexRange[Index[SU2W        ]] = Unfold[Range[3]]; 
+IndexRange[Index[SU2D        ]] = Unfold[Range[2]];
+IndexRange[Index[Gluon       ]] = NoUnfold[Range[8]];
+IndexRange[Index[Colour      ]] = NoUnfold[Range[3]]; 
+IndexRange[Index[Generation  ]] = Range[3];
+IndexRange[Index[CPevenscalar]] = Range[3];
+IndexRange[Index[Neutrino   ]]  = Unfold[Range[6]];
+
+IndexStyle[SU2W,         j];
+IndexStyle[SU2D,         k];
+IndexStyle[Gluon,        a];
+IndexStyle[Colour,       m];
+IndexStyle[Generation,   f];
+IndexStyle[CPevenscalar, p];
+IndexStyle[Neutrino,    c];
+
+
+
+(* ************************** *)
+(* *** Interaction orders *** *)
+(* ***  (as used by mg5)  *** *)
+(* ************************** *)
+
+M$InteractionOrderHierarchy = {
+  {QCD, 1},
+  {QED, 2},
+  {HG, 1},
+  {HA, 1}
+};
+
+Get["2HDMScU1Nmet_parameters.fr"];
+
+Get["2HDMScU1Nmet_fields.fr"];
+
+Get["2HDMScU1Nmet_lagrangian.fr"];
+
